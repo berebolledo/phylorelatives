@@ -4,8 +4,8 @@
 #usage: phylorelatives.py [-h] [-i FASTA] [-b INT] [-p] [-r FASTA]
 #
 #Constructs relatedness of a set of sequences based on the pairwise proportion
-#of different sites. It reports the test sequences relatives, tree plot and
-#tree in Newick format. One or more test sequences are accepted as long as
+#of different sites. It reports the test sequences relatives, tree plots and
+#trees in Newick format. One or more test sequences are accepted as long as
 #their name includes the strict suffix "_minor" or "_test" (i.e. >seq1_minor).
 #IMPORTANT: Sequences must have the same length!
 #
@@ -57,6 +57,12 @@ def ape_consensus(tree,tree_function,data,iters=1000):
     cons_tree = ape.consensus(bs_trees,p=0.5)
     return cons_tree
 
+#def parsimony_tree(tree,data):
+#    """Return Maximum Parsimony tree from supplied tree"""
+#    phangorn = importr('phangorn')
+#    mp_tree = phangorn.optim_parsimony(tree,phangorn.phyDat(data), trace=0)
+#    return mp_tree
+
 
 def dendro_relatives(tree,minor):
     """Return minor allele sequence relatives in tree"""
@@ -73,18 +79,34 @@ def dendro_relatives(tree,minor):
         parent = parent.parent_node
     return output
 
-
-def dendro_plot(tree, root=False ):
-    """Plot tree to file in ascii format"""
+def plot_tree(outfile, tree1, tree2=None, root=False):
+    """Generate tree(s) plot"""
     ape = importr('ape')
-    if root:
-        newick = list(ape.write_tree(ape.root(tree,root)))[0]
-    else:
-        newick = list(ape.write_tree(tree))[0]
-    t = dendropy.Tree.get_from_string(newick,"newick")
-    ascii_tree = t.as_ascii_plot()
-    return ascii_tree
-
+    graphics  = importr('graphics')
+    grdevices = importr('grDevices')
+    if tree2 is None:
+        grdevices.png(file=outfile, width=1024, height=768)
+        if root:
+            ape.plot_phylo(ape.root(tree1,root),edge_width=2,cex=1,underscore=1)
+        else:
+            ape.plot_phylo(tree1,edge_width=2,cex=1,underscore=1)
+        graphics.title(main='Neighbor Joining')
+        grdevices.dev_off()
+    elif tree2 is not None:
+        grdevices.png(file=outfile, width=1024, height=768)
+        graphics.par(mfcol=array.array('i',[1,2]))
+        if root:
+            ape.plot_phylo(ape.root(tree1,root),edge_width=2,cex=1,underscore=1)
+        else:
+            ape.plot_phylo(tree1,edge_width=2,cex=1,underscore=1)
+        graphics.title(main='Neighbor Joining', cex=1.5, font=2)
+        if root:
+            ape.plot_phylo(ape.root(tree2,root),edge_width=2,cex=1,underscore=1)
+        else:
+            ape.plot_phylo(tree2,edge_width=2,cex=1,underscore=1)
+        graphics.title(main='Maximum Parsimony',cex=1.5, font=2)
+        grdevices.dev_off()
+    return
 
 def write_nwk(tree):
     "Write proper Newick string"
@@ -172,17 +194,28 @@ def main():
     else:
         newick = open(args.multi_fasta+'-newick.txt','w+')
     if args.trees_out is not None:
-        tree_plot_file = open(args.trees_out, 'w+')
+        tree_plot_file = args.trees_out
     else:
-        tree_plot_file = open(args.multi_fasta+'-tree-ascii.txt', 'w+')
+        tree_plot_file = args.multi_fasta+'-tree.png'
 
-    newick.write('%s\n' % (write_nwk(cons_tree)))
+    newick.write('>Neighbor_Joining\n%s\n' % (write_nwk(cons_tree)))
     relatives.write('#source\tsample\trelatives\n')
     for node in minor_ids:
         nj_relatives = [relative for relative in dendro_relatives(cons_tree,node) if relative != node]
         relatives.write( 'Neighbor_Joining_tree\t%s\t%s\n' % (node,','.join(sorted(nj_relatives))) )
+    plot_tree(tree_plot_file,cons_tree,root=root_id)
 
-    tree_plot_file.write(dendro_plot(cons_tree,root=root_id))
+
+# Parsimony requires X11 related dependencies. Tricky
+#    if args.max_parsimony:
+#        mp_tree = parsimony_tree(cons_tree,data)
+#        newick.write('>Maximum_Parsimony\n%s\n' % (write_nwk(mp_tree)))
+#        for node in minor_ids:
+#            mp_relatives = [relative for relative in dendro_leaves(mp_tree,node) if relative != node]
+#            relatives.write( 'Maximum_Parsimony_tree\t%s\t%s\n' % (node,','.join(sorted(mp_relatives))) )
+#        plot_tree(tree_plot_file, tree1=cons_tree, tree2=mp_tree, root=args.root)
+#    else:
+#        plot_tree(tree_plot_file,cons_tree,root=args.root)
 
     newick.close()
     relatives.close()

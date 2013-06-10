@@ -44,7 +44,7 @@
     <data format="fasta" name="multifasta" label="${tool.name} on ${on_string}: multifasta" />
     <data format="tabular" name="siblings" label="${tool.name} on ${on_string}: relatives"/>
     <data format="txt" name="newick" label="${tool.name} on ${on_string}: newick"/>
-    <data format="txt" name="plot"  label="${tool.name} on ${on_string}: ascii plot"/>
+    <data format="png" name="plot"  label="${tool.name} on ${on_string}: plot"/>
   </outputs>
   <tests>
     <test>
@@ -57,7 +57,7 @@
   <help>
     
 
- 
+
 -----
 
 .. class:: infomark
