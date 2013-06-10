@@ -1,0 +1,38 @@
+<tool_dependency>
+    <package name="readline" version="6.2">
+        <repository name="package_readline_6_2" owner="boris" prior_installation_required="True" toolshed="http://testtoolshed.g2.bx.psu.edu/"/>
+    </package>
+    <package name="ape" version="3.0-8">
+        <repository name="package_ape_3_0" owner="boris" prior_installation_required="True" toolshed="http://testtoolshed.g2.bx.psu.edu/"/>
+    </package>
+    <package name="rpy2" version="2.2.6">
+        <install version="1.0">
+            <actions>
+                <action type="download_by_url">https://pypi.python.org/packages/source/r/rpy2/rpy2-2.2.6.tar.gz</action>
+                <action type="set_environment_for_install">
+                    <repository name="package_readline_6_2" owner="boris" toolshed="http://testtoolshed.g2.bx.psu.edu/">
+                        <package name="readline" version="6.2"/>
+                    </repository>
+                    <repository name="package_ape_3_0" owner="boris" toolshed="http://testtoolshed.g2.bx.psu.edu/">
+                        <package name="ape" version="3.0-8"/>
+                    </repository>
+                </action>
+                <action type="make_directory">$INSTALL_DIR/lib/python</action>
+                <action type="shell_command">export R_HOME=$R_HOME &amp;&amp; export R_LIBS=$R_LIBS &amp;&amp; export PATH=$PATH &amp;&amp;export PYTHONPATH=$PYTHONPATH:$INSTALL_DIR/lib/python &amp;&amp;python setup.py install --home $INSTALL_DIR --install-scripts $INSTALL_DIR/bin</action>
+                <action type="set_environment">
+                    <environment_variable name="R_HOME" action="set_to">$ENV[R_HOME]</environment_variable>
+                    <environment_variable name="R_LIBS" action="set_to">$ENV[R_LIBS]</environment_variable>
+                    <environment_variable name="PATH" action="set_to">$ENV[PATH]</environment_variable>
+                    <environment_variable name="PYTHONPATH" action="prepend_to">$INSTALL_DIR/lib/python</environment_variable>
+                    <environment_variable name="PATH" action="prepend_to">$INSTALL_DIR/bin</environment_variable>
+                </action>
+            </actions>
+        </install>
+        <readme>In order to upgrade one will have to first remove older installed rpy2 packages then and only then install the recent version of rpy2 wished.
+                Python version 2.5 or greater, as well as R-2.8.0 or greater are required.
+                When compiling R from source, do not forget to specify –enable-R-shlib at the ./configure step.
+                gcc-4.4 is used for compiling the C parts on Linux.
+                If installing from a linux distribution, the Python-dev package will obviously be required to compile rpy2
+                On OS X, the XCode tools will be required in order to compile rpy2.</readme>
+    </package>
+</tool_dependency>

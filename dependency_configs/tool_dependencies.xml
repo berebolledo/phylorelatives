@@ -1,0 +1,14 @@
+<tool_dependency>
+    <package name="R" version="2.15.0">
+        <repository toolshed="http://testtoolshed.g2.bx.psu.edu" name="package_r_2_15" owner="boris"/>
+    </package>
+    <package name="ape" version="3.0-8">
+        <repository toolshed="http://testtoolshed.g2.bx.psu.edu" name="package_ape_3_0" owner="boris" />
+    </package>
+    <package name="rpy2" version="2.2.6">
+        <repository toolshed="http://testtoolshed.g2.bx.psu.edu" name="package_rpy2_2_2" owner="boris"/>
+    </package>
+    <package name="dendropy" version="3.12.0">
+        <repository toolshed="http://testtoolshed.g2.bx.psu.edu" name="package_dendropy_3_12" owner="boris"/>
+    </package>
+</tool_dependency>

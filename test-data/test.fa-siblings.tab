@@ -1,0 +1,5 @@
+Neighbor_Joining_tree	M52C1_blood_minor	M52_blood_minor
+Neighbor_Joining_tree	M52_blood_minor	M52C1_blood_minor
+Neighbor_Joining_tree	M51C1_blood_minor	M51C2_blood_minor
+Neighbor_Joining_tree	M51C2_blood_minor	M51C1_blood_minor
+Neighbor_Joining_tree	M51_blood_minor	

@@ -1,0 +1,26 @@
+<tool_dependency>
+    <package name="R" version="2.15.0">
+        <repository name="package_r_2_15" owner="boris" prior_installation_required="True" toolshed="http://testtoolshed.g2.bx.psu.edu/"/>
+    </package>
+    <package name="ape" version="3.0-8">
+        <install version="1.0">
+            <actions>
+                <action type="download_by_url">http://cran.r-project.org/src/contrib/ape_3.0-8.tar.gz</action>
+                <action type="set_environment_for_install">
+                    <repository name="package_r_2_15" owner="boris" toolshed="http://testtoolshed.g2.bx.psu.edu/">
+                        <package name="R" version="2.15.0"/>
+                    </repository>
+                </action>
+                <action type="make_directory">$INSTALL_DIR</action>
+                <action type="shell_command"> export PATH=$PATH &amp;&amp; export R_HOME=$R_HOME &amp;&amp; export R_LIBS=$R_LIBS &amp;&amp; R CMD INSTALL ape_3.0-8.tar.gz -l $INSTALL_DIR </action>
+                <action type="set_environment">
+                <environment_variable name="PATH" action="set_to">$ENV[PATH]</environment_variable>
+                <environment_variable name="R_HOME" action="set_to">$ENV[R_HOME]</environment_variable>
+                <environment_variable name="R_LIBS" action="set_to">$ENV[R_LIBS]</environment_variable>
+                <environment_variable name="R_LIBS" action="prepend_to">$INSTALL_DIR</environment_variable>
+                </action>
+            </actions>
+        </install>
+        <readme> ape provides functions for reading, writing, plotting, and manipulating phylogenetic trees</readme>
+    </package>
+</tool_dependency>

@@ -1,0 +1,116 @@
+<tool id="phylorelatives" name="Phylorelatives" version="0.0.1">
+  <description>Relatedness of minor alelle sequences in NJ tree</description>
+  <requirements>
+    <requirement type="package" version="2.15.0">R</requirement>
+    <requirement type="package" version="2.2.6">rpy2</requirement>
+    <requirement type="package" version="3.12.0">dendropy</requirement>
+    <requirement type="package" version="3.0-8">ape</requirement>
+  </requirements>
+  <command interpreter="python">phylorelatives.py
+     #for $sequence in $sequences:
+         -i "${sequence.sequence}"
+     #end for
+     -m "${multifasta}"
+     -b "$iterations"
+     $pairwise
+     #if str($root.root_selector)=="upload_root":
+      -r "${root.root_fa}"
+     #end if
+     --relatives-out "$siblings"
+     --newick-out "$newick"
+     --trees-out "$plot"
+
+  </command>
+  <inputs>
+    <repeat name="sequences" title="Input FASTA file" min="1" help="Files will be concatenated into a single FASTA multiple alignment file, thus equal length homologous sequences are required">
+      <param format="fasta" name="sequence" type="data" label="FASTA file" help="Requires at least one minor allele sequence properly labeled &quot;_minor&quot; or &quot;_test&quot; e.g. &quot;>sample1_minor&quot;">
+      </param>
+    </repeat>
+    <conditional name="root">
+      <param name="root_selector" type="select" label=" Root sequence">
+        <option value="unrooted" selected="True"></option>
+        <option value="upload_root"></option>
+      </param>
+      <when value="unrooted">
+      </when>           
+      <when value="upload_root">
+        <param name="root_fa" format="fasta" type="data"  label="Root tree using" help="Must have the same length as input sequences"/>
+      </when>
+    </conditional>
+    <param name="pairwise" type="boolean" truevalue="-p" falsevalue="" checked="False" label="Use pairwise deletion of gaps/missing data" help="Defaults to &quot;Complete deletion&quot;"/>
+    <param name="iterations" type="integer" value="1000" label="Change number of bootstrap replicas" help="0 to deactivate"/>  
+  </inputs>
+  <outputs>
+    <data format="fasta" name="multifasta" label="${tool.name} on ${on_string}: multifasta" />
+    <data format="tabular" name="siblings" label="${tool.name} on ${on_string}: relatives"/>
+    <data format="txt" name="newick" label="${tool.name} on ${on_string}: newick"/>
+    <data format="png" name="plot"  label="${tool.name} on ${on_string}: plot"/>
+  </outputs>
+  <tests>
+    <test>
+      <param name="iterations" value="0"/>
+      <param name="sequence" value="test.fa"/>
+      <output name="siblings" file="test.fa-siblings.tab"/>
+    </test>
+  </tests>
+
+  <help>
+    
+
+
+-----
+
+.. class:: infomark
+
+**What it does**
+
+Constructs relatedness of a set of sequences based on the pairwise proportion of different sites.
+One or more test sequences are accepted as long as their name include the strict suffix "_minor" or "_test" (i.e. >seq1_minor).
+It returns the FASTA multiple alignment used, and reports a table with the closest major allele relatives per minor allele sequence, the tree plot and newick string of the tree.
+
+-----
+
+.. class:: warningmark
+
+**Note**
+
+This tools DOES NOT align the sequences.
+Consequently, same length homologous sequences are required as input to fabricate a FASTA multiple alignment by concatenation if more than one FASTA file is provided.
+
+-----
+
+.. class:: infomark
+
+**About formats**
+
+*FASTA multiple alignment*
+
+See http://www.bioperl.org/wiki/FASTA_multiple_alignment_format
+
+-----
+
+**Example**
+
+- For the following dataset::
+    >sample1_major
+    >sample1_minor
+    >sample2_major
+    >sample3_major
+    >sample4_major
+  
+
+- running this tool with *b = 1000*  *m = yes* *root = RSRS*,  will return::
+    newick
+    relatives
+    plot
+
+-----
+
+**Citation**
+
+If you use this tool, please cite Dickins B, Rebolledo-Jaramillo B, et al. *In preparation.*
+(boris-at-bx.psu.edu)
+
+  </help>
+
+</tool>
